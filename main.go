@@ -35,8 +35,9 @@ func main() {
 		return c.SendString("Hello, World!")
 	})
 
+	api.Get("/:id", transactionHandler.GetTransaction)
 	api.Post("/", transactionHandler.CreateTransactions)
 	api.Post("/midtrans", transactionHandler.GetNotification)
 
-	app.Listen(":3000")
+	app.Listen("0.0.0.0:3000")
 }

@@ -1,9 +1,11 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 	"skripsi-transaction-service/helper"
 	"skripsi-transaction-service/transaction"
+	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -32,6 +34,18 @@ func (h *transactionHandler) CreateTransactions(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).JSON(response)
 	}
 	response := helper.APIResponse("Success to create transacation", http.StatusOK, "success", transaction.FormatTransaction(newTransaction))
+	return c.JSON(response)
+}
+
+func (h *transactionHandler) GetTransaction(c *fiber.Ctx) error {
+	id, _ := strconv.Atoi(c.Params("id"))
+	data, err := h.service.GetTransactionByID(id)
+	if err != nil {
+		response := helper.APIResponse("Failed to get transacation", http.StatusInternalServerError, "error", err.Error())
+		return c.Status(http.StatusBadRequest).JSON(response)
+	}
+	fmt.Println(data)
+	response := helper.APIResponse("Success to get transacation", http.StatusOK, "success", transaction.FormatTransaction(data))
 	return c.JSON(response)
 }
 

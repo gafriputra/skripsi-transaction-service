@@ -1,6 +1,7 @@
 package transaction
 
 import (
+	"database/sql"
 	"time"
 )
 
@@ -18,7 +19,7 @@ type Transaction struct {
 	PaymentURL        string
 	CreatedAt         time.Time
 	UpdatedAt         time.Time
-	DeletedAt         time.Time
+	DeletedAt         sql.NullTime
 	Details           []TransactionDetail
 }
 

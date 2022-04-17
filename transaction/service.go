@@ -12,7 +12,7 @@ type service struct {
 }
 
 type Service interface {
-	GetTransactionByID(ID int) ([]Transaction, error)
+	GetTransactionByID(ID int) (Transaction, error)
 	CreateTransaction(input CreateTransactionInput) (Transaction, error)
 	ProcessPayment(input TransactionNotificationInput) error
 }
@@ -21,8 +21,8 @@ func NewService(repository Repository, paymentService payment.Service) *service 
 	return &service{repository, paymentService}
 }
 
-func (s *service) GetTransactionByID(ID int) ([]Transaction, error) {
-	return s.repository.GetByUserID(ID)
+func (s *service) GetTransactionByID(ID int) (Transaction, error) {
+	return s.repository.GetByID(ID)
 }
 
 func (s *service) CreateTransaction(input CreateTransactionInput) (Transaction, error) {
@@ -43,15 +43,18 @@ func (s *service) CreateTransaction(input CreateTransactionInput) (Transaction, 
 		return newTransaction, err
 	}
 
+	details := []TransactionDetail{}
 	for _, detail := range input.Details {
-		_, err := s.repository.SaveDetail(TransactionDetail{
+		details = append(details, TransactionDetail{
 			TransactionID: newTransaction.ID,
 			ProductID:     detail.ProductID,
 			Quantity:      detail.Quantity,
 		})
-		if err != nil {
-			return newTransaction, err
-		}
+	}
+
+	_, err = s.repository.SaveDetails(details)
+	if err != nil {
+		return Transaction{}, err
 	}
 
 	paymentTransaction := payment.Transaction{
