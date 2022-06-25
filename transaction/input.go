@@ -11,7 +11,7 @@ type CreateTransactionInput struct {
 
 type CreateTransactionDetailInput struct {
 	ProductID int     `json:"product_id" binding:"required"`
-	Quantity  int     `json:"quantity" binding:"required"`
+	Quantity  int     `json:"qty" binding:"required"`
 	Price     float64 `json:"price" binding:"required"`
 }
 

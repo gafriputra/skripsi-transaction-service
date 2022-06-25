@@ -9,6 +9,7 @@ import (
 	"skripsi-transaction-service/transaction"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -30,6 +31,7 @@ func main() {
 
 	app := fiber.New()
 	api := app.Group("/api/v1/transaction")
+	app.Use(cors.New())
 
 	api.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World!")
@@ -39,5 +41,5 @@ func main() {
 	api.Post("/", transactionHandler.CreateTransactions)
 	api.Post("/midtrans", transactionHandler.GetNotification)
 
-	app.Listen("0.0.0.0:3000")
+	app.Listen("0.0.0.0:" + helper.Env("APP_PORT"))
 }
